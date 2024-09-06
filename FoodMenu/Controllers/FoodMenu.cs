@@ -13,9 +13,16 @@ namespace FoodMenu.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Dishes.ToListAsync());
+            var dishes = _context.Dishes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                dishes = dishes.Where(d => d.Name.Contains(searchString));
+            }
+
+            return View(await dishes.ToListAsync());
         }
 
         public async Task<IActionResult> Details(int? id)
